@@ -27,19 +27,9 @@ A Chrome extension for monitoring your Cursor.com API usage balance with real-ti
 
 ## Screenshots
 
-<details>
+![Cursor Balance Monitor](https://github.com/user-attachments/assets/fdf8fc04-dec7-4e70-a92f-fc32c8164662)
 
-  ![2026-02-01 17 51 48](https://github.com/user-attachments/assets/fdf8fc04-dec7-4e70-a92f-fc32c8164662)
-
-<summary>Click to view screenshots</summary>
-
-### Extension Popup
-The popup shows your current usage, membership type, and detailed cost breakdown.
-
-### Dashboard Block
-On the Cursor dashboard, the extension adds a summary block showing Total, Paid Models, and Auto costs.
-
-</details>
+*Extension popup showing API usage, membership type, and detailed cost breakdown*
 
 ## Installation
 
@@ -47,7 +37,7 @@ On the Cursor dashboard, the extension adds a summary block showing Total, Paid 
 
 1. Clone or download this repository:
    ```bash
-   git clone https://github.com/yourusername/cursor-balance-monitor.git
+   git clone https://github.com/SupermaNO/Cursor_Monitor.git
    ```
 
 2. Open Chrome and navigate to `chrome://extensions/`
