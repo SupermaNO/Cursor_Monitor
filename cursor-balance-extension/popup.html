@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cursor Balance Monitor</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Cursor Balance</h1>
+      <button id="refresh-btn" class="icon-btn" title="Refresh">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div id="logged-in-view" class="view">
+      <div class="user-info">
+        <span id="user-email" class="email">user@example.com</span>
+        <span id="membership-type" class="membership">free_trial</span>
+      </div>
+
+      <div id="trial-section" class="trial-section hidden">
+        <div class="trial-info">
+          <span class="trial-label">Trial:</span>
+          <span id="trial-days" class="trial-days">2 / 7 days (5 left)</span>
+        </div>
+        <div class="trial-progress-bar">
+          <div id="trial-progress" class="trial-progress"></div>
+        </div>
+      </div>
+
+      <div class="usage-card">
+        <div class="usage-header">
+          <span class="label">API Usage</span>
+          <span id="api-percent" class="percent">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div id="api-progress" class="progress"></div>
+        </div>
+        <div class="usage-stats">
+          <span id="usage-used">0</span> / <span id="usage-limit">0</span> requests
+        </div>
+      </div>
+
+      <div id="detailed-section" class="detailed-section hidden">
+        <div class="detailed-header">Detailed Usage</div>
+        <div class="detailed-grid">
+          <div class="detailed-item">
+            <span class="label">Total</span>
+            <span id="detail-total" class="value">$0.00</span>
+          </div>
+          <div class="detailed-item">
+            <span class="label">Paid Models</span>
+            <span id="detail-paid" class="value">$0.00</span>
+          </div>
+          <div class="detailed-item">
+            <span class="label">Auto</span>
+            <span id="detail-auto" class="value">$0.00</span>
+          </div>
+        </div>
+        <div class="detailed-hint">
+          Updated when you visit the dashboard
+        </div>
+      </div>
+
+      <div class="last-update">
+        <span>Last update: </span>
+        <span id="last-update-time">Never</span>
+      </div>
+
+      <div class="actions">
+        <button id="dashboard-btn" class="btn secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+          Dashboard
+        </button>
+        <button id="logout-btn" class="btn danger">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          Log Out
+        </button>
+      </div>
+    </div>
+
+    <div id="logged-out-view" class="view hidden">
+      <div class="logged-out-message">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <p>Not logged in to Cursor</p>
+        <span class="hint">Please log in to see your usage</span>
+      </div>
+
+      <div class="actions">
+        <button id="login-btn" class="btn primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <polyline points="10 17 15 12 10 7"></polyline>
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+          </svg>
+          Log In to Cursor
+        </button>
+      </div>
+    </div>
+
+    <div id="loading-view" class="view">
+      <div class="loading">
+        <div class="spinner"></div>
+        <span>Loading...</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
