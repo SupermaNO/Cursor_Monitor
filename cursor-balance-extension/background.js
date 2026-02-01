@@ -3,6 +3,7 @@
 const API_AUTH_ME = 'https://cursor.com/api/auth/me';
 const API_USAGE_SUMMARY = 'https://cursor.com/api/usage-summary';
 const API_AUTH_STRIPE = 'https://cursor.com/api/auth/stripe';
+const API_FILTERED_USAGE = 'https://cursor.com/api/dashboard/get-filtered-usage-events';
 const ALARM_NAME = 'fetchBalance';
 const FETCH_INTERVAL_MINUTES = 5;
 
@@ -66,6 +67,61 @@ async function buildCookieHeader() {
   return Object.entries(uniqueCookies)
     .map(([name, value]) => `${name}=${value}`)
     .join('; ');
+}
+
+// Fetch detailed usage from filtered usage events API
+async function fetchDetailedUsage(cookieHeader, billingCycleEnd) {
+  try {
+    // Calculate date range based on billing cycle
+    const endDate = billingCycleEnd || Date.now();
+    const startDate = endDate - (30 * 24 * 60 * 60 * 1000); // ~30 days ago
+    
+    const response = await fetch(API_FILTERED_USAGE, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Cookie': cookieHeader
+      },
+      body: JSON.stringify({
+        teamId: 0,
+        startDate: String(startDate),
+        endDate: String(endDate),
+        page: 1,
+        pageSize: 500
+      })
+    });
+    
+    if (!response.ok) {
+      console.log('Failed to fetch detailed usage:', response.status);
+      return null;
+    }
+    
+    const data = await response.json();
+    console.log('Detailed usage data:', data);
+    
+    // Calculate sums from usageEventsDisplay
+    let total = 0, auto = 0, others = 0;
+    for (const event of data.usageEventsDisplay || []) {
+      const cents = event.tokenUsage?.totalCents || 0;
+      total += cents;
+      if (event.model?.toLowerCase().includes('auto')) {
+        auto += cents;
+      } else {
+        others += cents;
+      }
+    }
+    
+    return {
+      total: total / 100,    // cents to dollars
+      auto: auto / 100,
+      others: others / 100,
+      eventsCount: data.totalUsageEventsCount
+    };
+  } catch (error) {
+    console.error('Error fetching detailed usage:', error);
+    return null;
+  }
 }
 
 // Fetch usage data from Cursor API
@@ -138,6 +194,9 @@ async function fetchUsageData() {
       console.log('Failed to fetch stripe data:', stripeError);
     }
     
+    // Fetch detailed usage from filtered events API
+    const detailedUsage = await fetchDetailedUsage(cookieHeader, usageData.billingCycleEnd);
+    
     // Save data
     const storageData = {
       isLoggedIn: true,
@@ -162,6 +221,12 @@ async function fetchUsageData() {
         isOnTrial: stripeData.membershipType === 'free_trial'
       }
     };
+    
+    // Add detailed usage if available
+    if (detailedUsage) {
+      storageData.detailedUsage = detailedUsage;
+      storageData.lastDetailedUpdate = Date.now();
+    }
     
     await chrome.storage.local.set(storageData);
     updateBadge(storageData.usage);
