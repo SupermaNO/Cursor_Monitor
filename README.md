@@ -28,6 +28,9 @@ A Chrome extension for monitoring your Cursor.com API usage balance with real-ti
 ## Screenshots
 
 <details>
+
+  ![2026-02-01 17 51 48](https://github.com/user-attachments/assets/fdf8fc04-dec7-4e70-a92f-fc32c8164662)
+
 <summary>Click to view screenshots</summary>
 
 ### Extension Popup
