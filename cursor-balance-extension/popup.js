@@ -26,6 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const dashboardBtn = document.getElementById('dashboard-btn');
   const logoutBtn = document.getElementById('logout-btn');
   const loginBtn = document.getElementById('login-btn');
+  const cookieBtn = document.getElementById('cookie-btn');
+  const cookieForm = document.getElementById('cookie-form');
+  const cookieFormClose = document.getElementById('cookie-form-close');
+  const cookieWorkosId = document.getElementById('cookie-workos-id');
+  const cookieSessionToken = document.getElementById('cookie-session-token');
+  const cookieLoginBtn = document.getElementById('cookie-login-btn');
+  const cookieError = document.getElementById('cookie-error');
+  const loginActions = document.getElementById('login-actions');
 
   // Show/hide views
   function showView(view) {
@@ -181,8 +189,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Login
   function login() {
-    chrome.tabs.create({ url: 'https://cursor.com/login' });
+    chrome.tabs.create({ url: 'https://authenticator.cursor.sh/' });
     window.close();
+  }
+
+  // Show cookie form
+  function showCookieForm() {
+    cookieForm.classList.remove('hidden');
+    loginActions.classList.add('hidden');
+    cookieError.classList.add('hidden');
+    cookieWorkosId.value = '';
+    cookieSessionToken.value = '';
+  }
+
+  // Hide cookie form
+  function hideCookieForm() {
+    cookieForm.classList.add('hidden');
+    loginActions.classList.remove('hidden');
+    cookieError.classList.add('hidden');
+  }
+
+  // Cookie login
+  function cookieLogin() {
+    const workosId = cookieWorkosId.value.trim();
+    const sessionToken = cookieSessionToken.value.trim();
+
+    if (!workosId || !sessionToken) {
+      cookieError.textContent = 'Both fields are required';
+      cookieError.classList.remove('hidden');
+      return;
+    }
+
+    cookieLoginBtn.disabled = true;
+    cookieLoginBtn.querySelector('.cookie-login-icon').classList.add('hidden');
+    cookieLoginBtn.querySelector('.cookie-login-text').textContent = 'Logging in...';
+    cookieError.classList.add('hidden');
+
+    chrome.runtime.sendMessage({
+      type: 'COOKIE_LOGIN',
+      data: { workosId, sessionToken }
+    }, (response) => {
+      cookieLoginBtn.disabled = false;
+      cookieLoginBtn.querySelector('.cookie-login-icon').classList.remove('hidden');
+      cookieLoginBtn.querySelector('.cookie-login-text').textContent = 'Log In';
+
+      if (chrome.runtime.lastError) {
+        cookieError.textContent = 'Extension error: ' + chrome.runtime.lastError.message;
+        cookieError.classList.remove('hidden');
+        return;
+      }
+
+      if (response && response.success) {
+        hideCookieForm();
+        loadData();
+        chrome.tabs.create({ url: 'https://cursor.com/agents' });
+        window.close();
+      } else {
+        cookieError.textContent = response?.error || 'Failed to set cookies';
+        cookieError.classList.remove('hidden');
+      }
+    });
   }
 
   // Event listeners
@@ -190,6 +256,9 @@ document.addEventListener('DOMContentLoaded', () => {
   dashboardBtn.addEventListener('click', openDashboard);
   logoutBtn.addEventListener('click', logout);
   loginBtn.addEventListener('click', login);
+  cookieBtn.addEventListener('click', showCookieForm);
+  cookieFormClose.addEventListener('click', hideCookieForm);
+  cookieLoginBtn.addEventListener('click', cookieLogin);
 
   // Initial load
   loadData();

@@ -19,6 +19,12 @@ A Chrome extension for monitoring your Cursor.com API usage balance with real-ti
   - Trial period status (if applicable)
   - Detailed cost breakdown (Total, Paid Models, Auto)
 
+- **Two Login Methods**:
+  - **Standard Login** — Redirects to [authenticator.cursor.sh](https://authenticator.cursor.sh/) for browser-based authentication
+  - **Cookie Login** — Paste your `workos_id` and `WorkosCursorSessionToken` cookies directly for quick authentication without a browser session
+
+- **Detailed Usage API** — Automatically fetches detailed usage events from the Cursor API in the background (no need to visit the dashboard page)
+
 - **Dashboard Enhancement** — Adds a visual usage summary block on the Cursor.com dashboard page
 
 - **Auto Refresh** — Automatically updates usage data every 5 minutes
@@ -52,11 +58,13 @@ A Chrome extension for monitoring your Cursor.com API usage balance with real-ti
 
 ## Usage
 
-1. **Login to Cursor** — Make sure you're logged in at [cursor.com](https://cursor.com)
+1. **Login to Cursor** — Use one of two methods:
+   - Click **Log In** to open the standard authentication page at [authenticator.cursor.sh](https://authenticator.cursor.sh/)
+   - Click **Cookies** to enter your `workos_id` and `WorkosCursorSessionToken` values manually (useful when standard auth is unavailable)
 
 2. **View Usage** — Click the extension icon to see your current API usage
 
-3. **Detailed Stats** — Visit the [Cursor Dashboard](https://cursor.com/dashboard?tab=usage) to populate detailed usage breakdown (Total, Paid Models, Auto costs)
+3. **Detailed Stats** — Detailed usage breakdown (Total, Paid Models, Auto costs) is fetched automatically in the background
 
 4. **Refresh** — Click the refresh button in the popup to manually update data
 
@@ -66,17 +74,20 @@ The extension works by:
 
 1. **Background Service Worker** (`background.js`)
    - Fetches data from Cursor API endpoints every 5 minutes
+   - Fetches detailed usage events via `get-filtered-usage-events` API
+   - Handles cookie-based authentication (setting `workos_id` and `WorkosCursorSessionToken`)
    - Updates the badge with current usage percentage
    - Stores data in Chrome's local storage
 
 2. **Content Script** (`content.js`)
    - Runs on the Cursor dashboard page
-   - Parses detailed usage data from the page
+   - Parses detailed usage data from the page (fallback)
    - Displays a summary block with costs breakdown
    - Sends detailed data to the extension
 
 3. **Popup** (`popup.html/js/css`)
    - Displays all collected data in a user-friendly interface
+   - Provides two login methods: standard auth and cookie-based auth
    - Provides quick actions (refresh, open dashboard, logout)
 
 ## Permissions
@@ -96,6 +107,7 @@ The extension requires the following permissions:
 - `https://cursor.com/api/auth/me` — User information
 - `https://cursor.com/api/usage-summary` — Usage statistics
 - `https://cursor.com/api/auth/stripe` — Subscription/trial information
+- `https://cursor.com/api/dashboard/get-filtered-usage-events` — Detailed usage events with cost breakdown
 
 ## Project Structure
 
@@ -138,10 +150,16 @@ The extension is ready to use as-is. For Chrome Web Store submission:
 
 **Badge shows "?"**
 - You're not logged in to Cursor.com
-- Try clicking "Log In to Cursor" in the popup
+- Try clicking "Log In" in the popup, or use the "Cookies" button to authenticate manually
 
 **No detailed usage data**
-- Visit the [Cursor Dashboard](https://cursor.com/dashboard?tab=usage) to populate detailed stats
+- Click refresh — detailed data is now fetched automatically via the API
+- As a fallback, visit the [Cursor Dashboard](https://cursor.com/dashboard?tab=usage)
+
+**Cookie login not working**
+- Make sure you're copying the full `workos_id` and `WorkosCursorSessionToken` values
+- The session token is a long string in the format `user_ID::JWT_TOKEN`
+- Tokens expire — you may need to get fresh values from your browser's dev tools
 
 **Extension not updating**
 - Click the refresh button in the popup

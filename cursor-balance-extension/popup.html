@@ -102,14 +102,54 @@
         <span class="hint">Please log in to see your usage</span>
       </div>
 
-      <div class="actions">
+      <div id="cookie-form" class="cookie-form hidden">
+        <div class="cookie-form-header">
+          <span class="cookie-form-title">Cookie Authentication</span>
+          <button id="cookie-form-close" class="icon-btn" title="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="cookie-field">
+          <label for="cookie-workos-id">workos_id</label>
+          <input type="text" id="cookie-workos-id" placeholder="user_01KG53K..." spellcheck="false">
+        </div>
+        <div class="cookie-field">
+          <label for="cookie-session-token">WorkosCursorSessionToken</label>
+          <textarea id="cookie-session-token" rows="3" placeholder="user_01KG53K...::eyJhbGci..." spellcheck="false"></textarea>
+        </div>
+        <div id="cookie-error" class="cookie-error hidden"></div>
+        <button id="cookie-login-btn" class="btn primary cookie-submit-btn">
+          <svg class="cookie-login-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <polyline points="10 17 15 12 10 7"></polyline>
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+          </svg>
+          <span class="cookie-login-text">Log In</span>
+        </button>
+      </div>
+
+      <div id="login-actions" class="actions">
         <button id="login-btn" class="btn primary">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
             <polyline points="10 17 15 12 10 7"></polyline>
             <line x1="15" y1="12" x2="3" y2="12"></line>
           </svg>
-          Log In to Cursor
+          Log In
+        </button>
+        <button id="cookie-btn" class="btn secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path>
+            <path d="M8.5 8.5v.01"></path>
+            <path d="M16 15.5v.01"></path>
+            <path d="M12 12v.01"></path>
+            <path d="M11 17v.01"></path>
+            <path d="M7 14v.01"></path>
+          </svg>
+          Cookies
         </button>
       </div>
     </div>

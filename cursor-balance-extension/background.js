@@ -50,6 +50,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ success });
     });
     return true;
+  } else if (message.type === 'COOKIE_LOGIN') {
+    performCookieLogin(message.data).then((result) => {
+      sendResponse(result);
+    });
+    return true;
   }
 });
 
@@ -304,6 +309,60 @@ function setLoggedOutState() {
     chrome.action.setBadgeText({ text: '?' });
     chrome.action.setBadgeBackgroundColor({ color: '#666666' });
   });
+}
+
+// Perform cookie login - set workos_id and WorkosCursorSessionToken cookies
+async function performCookieLogin(data) {
+  try {
+    const { workosId, sessionToken } = data;
+    
+    if (!workosId || !sessionToken) {
+      return { success: false, error: 'Both workos_id and session token are required' };
+    }
+    
+    const url = 'https://cursor.com';
+    const expirationDate = Math.floor(Date.now() / 1000) + (365 * 24 * 60 * 60); // 1 year
+    
+    // Set workos_id cookie
+    await chrome.cookies.set({
+      url: url,
+      name: 'workos_id',
+      value: workosId,
+      domain: 'cursor.com',
+      path: '/',
+      secure: true,
+      httpOnly: false,
+      sameSite: 'lax',
+      expirationDate: expirationDate
+    });
+    
+    // Set WorkosCursorSessionToken cookie
+    await chrome.cookies.set({
+      url: url,
+      name: 'WorkosCursorSessionToken',
+      value: sessionToken,
+      domain: 'cursor.com',
+      path: '/',
+      secure: true,
+      httpOnly: false,
+      sameSite: 'lax',
+      expirationDate: expirationDate
+    });
+    
+    console.log('Cookies set successfully');
+    
+    // Fetch data to verify login worked
+    const success = await fetchUsageData();
+    
+    if (success) {
+      return { success: true };
+    } else {
+      return { success: false, error: 'Cookies set but failed to authenticate. Check your values.' };
+    }
+  } catch (error) {
+    console.error('Error during cookie login:', error);
+    return { success: false, error: error.message };
+  }
 }
 
 // Perform logout - clear all cursor.com data
